@@ -25,15 +25,23 @@ st.markdown("""
 
 def preprocess_data(df):
     """Handle categorical variables and add time features"""
-    # Create dummy variables for categorical columns
-    df = pd.get_dummies(df, columns=['WeekStatus', 'Load_Type'])
+    # First, create a copy to avoid modifying the original
+    df = df.copy()
+    
+    # Convert categorical columns to numeric using dummy variables
+    df = pd.get_dummies(df, columns=['WeekStatus', 'Load_Type'], dtype=float)
     
     # Add time-based features
-    df["year"] = df.index.year
-    df["month"] = df.index.month
-    df["dayofweek"] = df.index.dayofweek
-    df["day"] = df.index.day
-    df["hour"] = df.index.hour
+    df["year"] = df.index.year.astype(float)
+    df["month"] = df.index.month.astype(float)
+    df["dayofweek"] = df.index.dayofweek.astype(float)
+    df["day"] = df.index.day.astype(float)
+    df["hour"] = df.index.hour.astype(float)
+    
+    # Convert all remaining columns to float
+    for col in df.columns:
+        if col != 'date':  # Skip the index
+            df[col] = df[col].astype(float)
     
     return df
 
@@ -42,6 +50,9 @@ def train_model(df):
     # Preprocess the data
     df = preprocess_data(df)
     
+    # Display datatypes for debugging
+    st.write("Data types after preprocessing:", df.dtypes)
+    
     length = df.shape[0]
     main = int(length * 0.8)
     trainer = df[:main]
@@ -49,17 +60,22 @@ def train_model(df):
     
     X = trainer.drop(columns=["CO2(tCO2)"])
     y = trainer["CO2(tCO2)"]
+    
+    # Make sure target is float
+    y = y.astype(float)
+    
     X_train, X_val, y_train, y_val = tts(X, y, train_size=0.8, random_state=42, shuffle=False)
     
-    # Initialize and train the model
+    # Initialize model with enable_categorical=True
     model = xgb.XGBRegressor(
         n_estimators=25,
         learning_rate=0.1,
         max_depth=7,
-        subsample=1.0
+        subsample=1.0,
+        enable_categorical=True
     )
     
-    # Store the column names for later use
+    # Store the column names
     st.session_state['feature_names'] = X_train.columns.tolist()
     
     # Fit the model
