@@ -6,6 +6,7 @@ import xgboost as xgb
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split as tts
 import plotly.graph_objects as go
+from sklearn.preprocessing import LabelEncoder
 
 # Set page config for dark theme
 st.set_page_config(
@@ -24,17 +25,36 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-def add_pd_times(df):
-    """Add time-based features to dataframe"""
+def preprocess_data(df):
+    """Handle categorical variables and add time features"""
+    # Create label encoders for categorical columns
+    label_encoders = {}
+    categorical_columns = ['WeekStatus', 'Load_Type']
+    
+    # Store the label encoders in session state
+    if 'label_encoders' not in st.session_state:
+        st.session_state.label_encoders = {}
+    
+    for col in categorical_columns:
+        if col in df.columns:
+            le = LabelEncoder()
+            df[col] = le.fit_transform(df[col])
+            st.session_state.label_encoders[col] = le
+    
+    # Add time-based features
     df["year"] = df.index.year
     df["month"] = df.index.month
     df["dayofweek"] = df.index.dayofweek
     df["day"] = df.index.day
     df["hour"] = df.index.hour
+    
     return df
 
 def train_model(df):
     """Train the XGBoost model"""
+    # Preprocess the data
+    df = preprocess_data(df)
+    
     length = df.shape[0]
     main = int(length * 0.8)
     trainer = df[:main]
@@ -139,8 +159,6 @@ def main():
     try:
         df = pd.read_csv("Steel_industry_data.csv", index_col="date")
         df.index = pd.to_datetime(df.index, format='%d/%m/%Y %H:%M')
-        df = add_pd_times(df)
-        df = df.drop(columns=["Day_of_week"])
         
         # Training section
         st.header("Model Training")
