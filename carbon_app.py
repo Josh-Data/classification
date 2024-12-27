@@ -3,10 +3,8 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import xgboost as xgb
-import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split as tts
 import plotly.graph_objects as go
-from sklearn.preprocessing import LabelEncoder
 
 # Set page config for dark theme
 st.set_page_config(
@@ -27,19 +25,8 @@ st.markdown("""
 
 def preprocess_data(df):
     """Handle categorical variables and add time features"""
-    # Create label encoders for categorical columns
-    label_encoders = {}
-    categorical_columns = ['WeekStatus', 'Load_Type']
-    
-    # Store the label encoders in session state
-    if 'label_encoders' not in st.session_state:
-        st.session_state.label_encoders = {}
-    
-    for col in categorical_columns:
-        if col in df.columns:
-            le = LabelEncoder()
-            df[col] = le.fit_transform(df[col])
-            st.session_state.label_encoders[col] = le
+    # Create dummy variables for categorical columns
+    df = pd.get_dummies(df, columns=['WeekStatus', 'Load_Type'])
     
     # Add time-based features
     df["year"] = df.index.year
@@ -64,10 +51,25 @@ def train_model(df):
     y = trainer["CO2(tCO2)"]
     X_train, X_val, y_train, y_val = tts(X, y, train_size=0.8, random_state=42, shuffle=False)
     
-    model = xgb.XGBRegressor(n_estimators=25, learning_rate=0.1, max_depth=7, subsample=1.0)
-    model.fit(X_train, y_train, eval_set=[(X_train, y_train), (X_val, y_val)])
+    # Initialize and train the model
+    model = xgb.XGBRegressor(
+        n_estimators=25,
+        learning_rate=0.1,
+        max_depth=7,
+        subsample=1.0
+    )
     
-    return model, tester, X_train.columns
+    # Store the column names for later use
+    st.session_state['feature_names'] = X_train.columns.tolist()
+    
+    # Fit the model
+    model.fit(
+        X_train, 
+        y_train,
+        eval_set=[(X_train, y_train), (X_val, y_val)]
+    )
+    
+    return model, tester
 
 def plot_predictions(tester, model):
     """Create prediction plot using plotly"""
@@ -116,11 +118,11 @@ def plot_predictions(tester, model):
     
     return fig
 
-def plot_feature_importance(model, feature_names):
+def plot_feature_importance(model):
     """Create feature importance plot"""
     importance = model.feature_importances_
     features_df = pd.DataFrame({
-        'Feature': feature_names,
+        'Feature': st.session_state['feature_names'],
         'Importance': importance
     }).sort_values('Importance', ascending=True)
     
@@ -164,12 +166,11 @@ def main():
         st.header("Model Training")
         if st.button("Train Model"):
             with st.spinner("Training in progress... 🔄"):
-                model, test_data, feature_names = train_model(df)
+                model, test_data = train_model(df)
                 
                 # Save model and test data in session state
                 st.session_state['model'] = model
                 st.session_state['test_data'] = test_data
-                st.session_state['feature_names'] = feature_names
                 
                 st.success("Model trained successfully! 🎉")
         
@@ -187,15 +188,14 @@ def main():
             
             with col2:
                 st.subheader("Feature Importance")
-                imp_fig = plot_feature_importance(st.session_state['model'],
-                                               st.session_state['feature_names'])
+                imp_fig = plot_feature_importance(st.session_state['model'])
                 st.plotly_chart(imp_fig, use_container_width=True)
             
             # Add metrics
-            predictions = st.session_state['model'].predict(
-                st.session_state['test_data'].drop(columns=["CO2(tCO2)"])
-            )
+            X_test = st.session_state['test_data'].drop(columns=["CO2(tCO2)"])
+            predictions = st.session_state['model'].predict(X_test)
             actual = st.session_state['test_data']["CO2(tCO2)"]
+            
             mse = np.mean((predictions - actual) ** 2)
             rmse = np.sqrt(mse)
             mae = np.mean(np.abs(predictions - actual))
