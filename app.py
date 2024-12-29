@@ -48,6 +48,24 @@ st.markdown("""
     .st-emotion-cache-1y4p8pa .stSlider > div > div > div > div {
         background-color: #4addbe !important;
     }
+    /* Ensure slider values are visible */
+    .stSlider label, 
+    .stSlider [data-testid="stMarkdownContainer"] p,
+    .stSlider [data-baseweb="caption"],
+    .stSlider span,
+    div[data-baseweb="slider"] div[role="slider"] + div,
+    .stMarkdown div[data-testid="stMarkdownContainer"] p {
+        color: #2c3e50 !important;
+    }
+    /* Style for numeric input values */
+    input[type="number"] {
+        color: #2c3e50 !important;
+    }
+    /* Additional styling for slider labels and values */
+    .stSlider [data-testid="stWidgetLabel"] {
+        color: #2c3e50 !important;
+        font-weight: 500;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -197,4 +215,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
