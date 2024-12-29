@@ -26,8 +26,17 @@ st.markdown("""
         color: white;
         border: 1px solid #2c3e50 !important;
     }
-    .stMarkdown, h1, h2, h3, p, span, label {
+    .stMarkdown, h1, h2, h3, p, span, label, .stSlider [data-baseweb="caption"] {
         color: #2c3e50 !important;
+    }
+    /* Ensure help text under sliders is visible */
+    .stSlider [data-testid="stText"] {
+        color: #2c3e50 !important;
+    }
+    /* Style for form submit button */
+    .stButton>button[type="submit"] {
+        color: white !important;
+        font-weight: 500;
     }
     /* Style for slider - new streamlit class names */
     .st-emotion-cache-1y4p8pa {
@@ -188,3 +197,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
