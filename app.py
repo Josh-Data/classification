@@ -57,14 +57,21 @@ st.markdown("""
     .stMarkdown div[data-testid="stMarkdownContainer"] p {
         color: #2c3e50 !important;
     }
-    /* Style for numeric input values */
-    input[type="number"] {
+    /* Style for numeric input values and range labels */
+    input[type="number"],
+    .stSlider [data-baseweb="typography"],
+    .stSlider [data-testid="stWidgetLabel"],
+    .stSlider span,
+    div[data-baseweb="slider"] div > span {
         color: #2c3e50 !important;
     }
-    /* Additional styling for slider labels and values */
-    .stSlider [data-testid="stWidgetLabel"] {
+    /* Specifically target the min/max range values */
+    .stSlider div[data-baseweb="slider"] div:first-of-type > div > div:first-of-type,
+    .stSlider div[data-baseweb="slider"] div:first-of-type > div > div:last-of-type {
+        background-color: #e6e9ef !important;
         color: #2c3e50 !important;
-        font-weight: 500;
+        border-radius: 4px;
+        padding: 2px 6px;
     }
     </style>
 """, unsafe_allow_html=True)
