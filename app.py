@@ -66,12 +66,19 @@ st.markdown("""
         color: #2c3e50 !important;
     }
     /* Specifically target the min/max range values */
-    .stSlider div[data-baseweb="slider"] div:first-of-type > div > div:first-of-type,
-    .stSlider div[data-baseweb="slider"] div:first-of-type > div > div:last-of-type {
-        background-color: #e6e9ef !important;
+    div[data-baseweb="slider"] span {
         color: #2c3e50 !important;
-        border-radius: 4px;
-        padding: 2px 6px;
+    }
+    /* Style the predict button text */
+    .stButton>button[type="submit"] {
+        color: white !important;
+    }
+    /* Additional styling for slider range values */
+    .stSlider div[data-baseweb="slider"] div[role="slider"] {
+        color: #2c3e50 !important;
+    }
+    .stSlider div[data-baseweb="slider"] div[role="slider"] + div {
+        color: #2c3e50 !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -222,4 +229,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
