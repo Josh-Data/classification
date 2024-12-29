@@ -5,6 +5,43 @@ import numpy as np
 from sklearn.model_selection import train_test_split as tts
 import pickle
 
+# Configure the page layout
+st.set_page_config(
+    page_title="ML Model Predictor",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# Custom CSS styling
+st.markdown("""
+    <style>
+    .stApp {
+        background-color: white;
+    }
+    .css-1d391kg {
+        background-color: white;
+    }
+    .stButton>button {
+        background-color: #4addbe;
+        color: white;
+        border: 1px solid #2c3e50 !important;
+    }
+    .stMarkdown, h1, h2, h3, p, span, label {
+        color: #2c3e50 !important;
+    }
+    /* Style for slider - new streamlit class names */
+    .st-emotion-cache-1y4p8pa {
+        width: 100%;
+    }
+    .st-emotion-cache-1y4p8pa .stSlider > div > div > div {
+        background-color: #4addbe !important;
+    }
+    .st-emotion-cache-1y4p8pa .stSlider > div > div > div > div {
+        background-color: #4addbe !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # Define default values based on median (50%) statistics
 DEFAULT_VALUES = {
     'footfall': 22.0,
@@ -58,15 +95,16 @@ def save_model(model):
         st.error(f"Error saving model: {str(e)}")
 
 def main():
-    st.title("My Machine Learning Model 🚀")
-    st.write("### Look at this beautiful model, Dad!")
+    # Custom title styling
+    st.markdown("<h1 style='text-align: center; color: #2c3e50;'>ML Model Predictor</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #2c3e50;'>Make predictions with our trained model</p>", unsafe_allow_html=True)
     
     # Store the feature columns globally after first training
     if 'feature_columns' not in st.session_state:
         st.session_state.feature_columns = None
     
-    # Training section
-    st.header("Model Training")
+    # Training section with styled header
+    st.markdown("<h2 style='color: #2c3e50;'>Model Training</h2>", unsafe_allow_html=True)
     if st.button("Train Model"):
         with st.spinner("Training in progress... Hold on to your kippah!"):
             try:
@@ -77,8 +115,8 @@ def main():
             except Exception as e:
                 st.error(f"Error during training: {str(e)}")
     
-    # Prediction section
-    st.header("Make Predictions")
+    # Prediction section with styled header
+    st.markdown("<h2 style='color: #2c3e50;'>Make Predictions</h2>", unsafe_allow_html=True)
     
     try:
         if st.session_state.feature_columns is not None:
@@ -87,7 +125,7 @@ def main():
             
             # Create a form for user input
             with st.form("prediction_form"):
-                st.write("### Enter values for prediction (starting with reasonable defaults)")
+                st.markdown("<h3 style='color: #2c3e50;'>Enter values for prediction</h3>", unsafe_allow_html=True)
                 
                 # Create input fields for each feature with sliders
                 input_data = {}
@@ -131,8 +169,8 @@ def main():
                     prediction = model.predict(input_df)
                     probability = model.predict_proba(input_df)
                     
-                    # Display results
-                    st.write("### Prediction Results")
+                    # Display results with styled header
+                    st.markdown("<h3 style='color: #2c3e50;'>Prediction Results</h3>", unsafe_allow_html=True)
                     result = 'Fail' if prediction[0] == 1 else 'Pass'
                     prob = probability[0][1]
                     
