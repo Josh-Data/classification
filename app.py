@@ -34,7 +34,7 @@ st.markdown("""
         color: #2c3e50 !important;
     }
     /* Style for form submit button */
-    .stButton>button[type="submit"] {
+    .stButton>button[type="submit"], .stButton button:has([data-testid="stFormSubmitButton"]) {
         color: white !important;
         font-weight: 500;
     }
