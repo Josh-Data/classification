@@ -253,7 +253,7 @@ def main():
                     st.markdown("### Classification Report")
                     st.table(report_df)
                 
-                st.success("Model trained successfully! ")
+                st.success("Model trained successfully! Mazel tov! 🎉")
                 
             except Exception as e:
                 st.error(f"Error during training: {str(e)}")
