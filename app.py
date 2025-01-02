@@ -239,20 +239,19 @@ def main():
                 with col2:
                     st.markdown("The model is performing quite well, especially with predicting model failures (class 1) without over-fitting as evidenced by the plot to the left.")
                     
-                    # Create styled classification report
-                    report_style = """
-                    <div style="font-family: monospace; color: #808080; white-space: pre;">
- precision    recall    f1-score    support
+                    # Example classification report data
+                    report_data = {
+                        "precision": [0.92, 0.87, 0.90, 0.90],
+                        "recall": [0.86, 0.93, 0.89, 0.89],
+                        "f1-score": [0.89, 0.90, 0.89, 0.89],
+                        "support": [93, 96, 189, 189]
+                    }
+                    report_index = ["Class 0", "Class 1", "Macro Avg", "Weighted Avg"]
+                    report_df = pd.DataFrame(report_data, index=report_index)
 
-           0       0.92      0.86      0.89        93
-           1       0.87      0.93      0.90        96
-
-    accuracy                           0.89       189
-   macro avg       0.90      0.89      0.89       189
-weighted avg       0.90      0.89      0.89       189
-                    </div>
-                    """
-                    st.markdown(report_style, unsafe_allow_html=True)
+                    # Display classification report as a table
+                    st.markdown("### Classification Report")
+                    st.table(report_df)
                 
                 st.success("Model trained successfully! Mazel tov! 🎉")
                 
