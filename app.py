@@ -244,7 +244,82 @@ def main():
             except Exception as e:
                 st.error(f"Error during training: {str(e)}")
 
-    # Prediction section [Rest of the prediction code remains the same]
+    # Prediction section
+    st.markdown("<h2 style='color: #2c3e50;'>Make Predictions</h2>", unsafe_allow_html=True)
+    st.markdown("""
+    A chemical engineering system is made up of different machines that work together as part of a larger setup. 
+    Each machine has a sensor to monitor how it's performing. Apart from the machine settings, external factors 
+    like air quality can also impact how long the system lasts. You can adjust the settings and predict how 
+    the system will perform based on those changes.
+    """)
     
+    try:
+        if st.session_state.feature_columns is not None:
+            with open('model.pkl', 'rb') as f:
+                model = pickle.load(f)
+            
+            # Create a form for user input
+            with st.form("prediction_form"):
+                st.markdown("<h3 style='color: #2c3e50;'>Enter values for prediction</h3>", unsafe_allow_html=True)
+                
+                # Create input fields for each feature with sliders
+                input_data = {}
+                
+                # Create two columns for a better layout
+                col1, col2 = st.columns(2)
+                
+                features = list(DEFAULT_VALUES.keys())
+                mid_point = len(features) // 2
+                
+                # First column
+                with col1:
+                    for feature in features[:mid_point]:
+                        min_val, max_val = VALUE_RANGES[feature]
+                        input_data[feature] = st.slider(
+                            f"{feature}",
+                            min_value=float(min_val),
+                            max_value=float(max_val),
+                            value=float(DEFAULT_VALUES[feature]),
+                            step=0.1 if feature in ['footfall', 'Temperature'] else 1.0,
+                            help=f"Range: {min_val} to {max_val}"
+                        )
+                
+                # Second column
+                with col2:
+                    for feature in features[mid_point:]:
+                        min_val, max_val = VALUE_RANGES[feature]
+                        input_data[feature] = st.slider(
+                            f"{feature}",
+                            min_value=float(min_val),
+                            max_value=float(max_val),
+                            value=float(DEFAULT_VALUES[feature]),
+                            step=0.1 if feature in ['footfall', 'Temperature'] else 1.0,
+                            help=f"Range: {min_val} to {max_val}"
+                        )
+                
+                submitted = st.form_submit_button("Predict")
+                if submitted:
+                    # Make prediction
+                    input_df = pd.DataFrame([input_data])
+                    prediction = model.predict(input_df)
+                    probability = model.predict_proba(input_df)
+                    
+                    # Display results with styled header
+                    st.markdown("<h3 style='color: #2c3e50;'>Prediction Results</h3>", unsafe_allow_html=True)
+                    result = 'Fail' if prediction[0] == 1 else 'Pass'
+                    prob = probability[0][1]
+                    
+                    # Colored box based on prediction
+                    if result == 'Pass':
+                        st.success(f"Prediction: {result} (Probability: {prob:.2%})")
+                    else:
+                        st.error(f"Prediction: {result} (Probability: {prob:.2%})")
+                    
+        else:
+            st.info("Please train the model first before making predictions!")
+            
+    except Exception as e:
+        st.error(f"Error loading model: {str(e)}")
+
 if __name__ == "__main__":
     main()
