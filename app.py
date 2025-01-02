@@ -147,11 +147,12 @@ def plot_training_metrics(eval_result):
     
     plt.scatter(x=training_rounds, 
                y=eval_result['validation_0']['logloss'], 
-               label='train')
+               label='train',
+               color='#4addbe')  # turquoise
     plt.scatter(x=training_rounds, 
                y=eval_result['validation_1']['logloss'], 
                label='val', 
-               color='red', 
+               color='#2c3e50',  # charcoal
                alpha=0.6)
     
     plt.xlabel('Training Rounds')
@@ -200,7 +201,11 @@ def main():
                 with col2:
                     st.markdown("The model is performing quite well, especially with predicting model failures (class 1) with out over fitting as evidenced by the plot to the left.")
                     report = classification_report(test_actual, test_pred)
-                    st.text(report)
+                    st.markdown(f"""
+                    <pre style='color: #2c3e50;'>
+                    {report}
+                    </pre>
+                    """, unsafe_allow_html=True)
                 
                 st.success("Model trained successfully! Mazel tov! 🎉")
             except Exception as e:
@@ -208,6 +213,12 @@ def main():
     
     # Prediction section with styled header
     st.markdown("<h2 style='color: #2c3e50;'>Make Predictions</h2>", unsafe_allow_html=True)
+    st.markdown("""
+    A chemical engineering system is made up of different machines that work together as part of a larger setup. 
+    Each machine has a sensor to monitor how it's performing. Apart from the machine settings, external factors 
+    like air quality can also impact how long the system lasts. You can adjust the settings and predict how 
+    the system will perform based on those changes.
+    """)
     
     try:
         if st.session_state.feature_columns is not None:
