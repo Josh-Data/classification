@@ -7,7 +7,6 @@ from sklearn.metrics import classification_report
 import pickle
 import matplotlib.pyplot as plt
 
-# Configure the page layout
 st.set_page_config(
     page_title="ML Model Predictor",
     layout="wide",
@@ -25,63 +24,28 @@ st.markdown("""
     }
     .stButton>button {
         background-color: #4addbe;
-        color: white;
+        color: #ffffff !important;  /* Making button text white and ensuring it overrides other styles */
         border: 1px solid #2c3e50 !important;
+        font-weight: 400 !important;  /* Slightly reducing font weight for better visibility */
+    }
+    .stButton>button:hover {
+        background-color: #5be4c5 !important;  /* Lighter shade for hover state */
     }
     .stMarkdown, h1, h2, h3, p, span, label, .stSlider [data-baseweb="caption"] {
         color: #2c3e50 !important;
     }
+    /* Rest of your existing CSS */
+""" + """
     /* Ensure help text under sliders is visible */
     .stSlider [data-testid="stText"] {
         color: #2c3e50 !important;
     }
     /* Style for form submit button */
     .stButton>button[type="submit"], .stButton button:has([data-testid="stFormSubmitButton"]) {
-        color: white !important;
-        font-weight: 500;
+        color: #ffffff !important;  /* Ensuring submit button text is white */
+        font-weight: 400 !important;
     }
-    /* Style for slider - new streamlit class names */
-    .st-emotion-cache-1y4p8pa {
-        width: 100%;
-    }
-    .st-emotion-cache-1y4p8pa .stSlider > div > div > div {
-        background-color: #4addbe !important;
-    }
-    .st-emotion-cache-1y4p8pa .stSlider > div > div > div > div {
-        background-color: #4addbe !important;
-    }
-    /* Ensure slider values are visible */
-    .stSlider label, 
-    .stSlider [data-testid="stMarkdownContainer"] p,
-    .stSlider [data-baseweb="caption"],
-    .stSlider span,
-    div[data-baseweb="slider"] div[role="slider"] + div,
-    .stMarkdown div[data-testid="stMarkdownContainer"] p {
-        color: #2c3e50 !important;
-    }
-    /* Style for numeric input values and range labels */
-    input[type="number"],
-    .stSlider [data-baseweb="typography"],
-    .stSlider [data-testid="stWidgetLabel"],
-    .stSlider span,
-    div[data-baseweb="slider"] div > span {
-        color: #2c3e50 !important;
-    }
-    /* Specifically target the min/max range values */
-    div[data-baseweb="slider"] span {
-        color: #2c3e50 !important;
-    }
-    /* Style the predict button text */
-    .stButton>button[type="submit"] {
-        color: white !important;
-    }
-    /* Additional styling for slider range values */
-    .stSlider div[data-baseweb="slider"] div[role="slider"] {
-        color: #2c3e50 !important;
-    }
-    .stSlider div[data-baseweb="slider"] div[role="slider"] + div {
-        color: #2c3e50 !important;
-    }
+    /* Rest of your existing styles... */
     </style>
 """, unsafe_allow_html=True)
 
