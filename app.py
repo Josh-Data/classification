@@ -226,7 +226,7 @@ def main():
     # Training section
     st.markdown("<h2 style='color: #36454F;'>Model Training</h2>", unsafe_allow_html=True)
     if st.button("Train Model"):
-        with st.spinner("Training in progress... "):
+        with st.spinner("Training in progress... Hold on to your kippah!"):
             try:
                 # Assuming train_model() and save_model() are pre-defined elsewhere in the code
                 model, features, eval_result, test_actual, test_pred = train_model()
