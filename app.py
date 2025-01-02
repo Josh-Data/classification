@@ -14,7 +14,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS styling for sliders
+# Custom CSS styling
 st.markdown("""
     <style>
     /* General background color */
@@ -44,7 +44,7 @@ st.markdown("""
         border: 1px solid #2c3e50 !important; /* Dark border on click */
     }
 
-    /* Ensure the button text is white */
+    /* Ensuring the button text is white */
     .stButton>button:focus {
         background-color: #4addbe !important; /* Same as default color */
         color: #ffffff !important; /* White text */
@@ -67,50 +67,45 @@ st.markdown("""
         background-color: #e74c3c !important;
     }
 
-    /* Styling for sliders - changing red to charcoal */
-    /* Set the color of the filled (active) portion of the slider */
-    .stSlider > div > div > div {
-        background-color: #2c3e50 !important; /* Charcoal for active portion */
+    /* General text styling */
+    .stMarkdown, h1, h2, h3, p, span, label, .stSlider [data-baseweb="caption"] {
+        color: #2c3e50 !important;
     }
 
-    /* Keep the unfilled portion of the slider light grey */
-    .stSlider > div > div > div > div {
-        background-color: lightgrey !important; /* Light grey for the unfilled portion */
+    /* Styling for sliders */
+    .stSlider [data-testid="stText"] {
+        color: #2c3e50 !important;
     }
 
-    /* Ensure slider values are visible */
     .stSlider label, 
     .stSlider [data-testid="stMarkdownContainer"] p,
     .stSlider [data-baseweb="caption"],
     .stSlider span,
     div[data-baseweb="slider"] div[role="slider"] + div,
     .stMarkdown div[data-testid="stMarkdownContainer"] p {
-        color: #2c3e50 !important; /* Charcoal for text */
+        color: #2c3e50 !important;
     }
 
-    /* Style the input and slider range values */
     input[type="number"],
     .stSlider [data-baseweb="typography"],
     .stSlider [data-testid="stWidgetLabel"],
     .stSlider span,
     div[data-baseweb="slider"] div > span {
-        color: #2c3e50 !important; /* Charcoal for slider range values */
+        color: #2c3e50 !important;
     }
 
     div[data-baseweb="slider"] span {
-        color: #2c3e50 !important; /* Charcoal for min/max values */
+        color: #2c3e50 !important;
     }
 
     .stSlider div[data-baseweb="slider"] div[role="slider"] {
-        color: #2c3e50 !important; /* Charcoal color for slider handle */
+        color: #2c3e50 !important;
     }
-
     .stSlider div[data-baseweb="slider"] div[role="slider"] + div {
-        color: #2c3e50 !important; /* Charcoal for slider handle */
+        color: #2c3e50 !important;
     }
     </style>
 """, unsafe_allow_html=True)
-
 
 # Define default values based on median (50%) statistics
 DEFAULT_VALUES = {
