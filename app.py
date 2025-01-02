@@ -256,6 +256,10 @@ def main():
 
                     # Display classification report as a table
                     st.markdown("### Classification Report")
+                    st.markdown(
+                        f'<style>div[data-testid="stTable"] {{ color: #36454F !important; }}</style>',
+                        unsafe_allow_html=True
+                    )
                     st.table(report_df)
                 
                 st.success("Model trained successfully! Mazel tov! 🎉")
