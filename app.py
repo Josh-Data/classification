@@ -249,9 +249,35 @@ def main():
                     report_index = ["Class 0", "Class 1", "Macro Avg", "Weighted Avg"]
                     report_df = pd.DataFrame(report_data, index=report_index)
 
-                    # Display classification report as a table
+                    # Display classification report as HTML table
                     st.markdown("### Classification Report")
-                    st.table(report_df)
+                    
+                    # Convert DataFrame to HTML table with custom styling
+                    html_table = f"""
+                    <div style='color: #36454F;'>
+                        <table style='width:100%; border-collapse: collapse; margin: 10px 0;'>
+                            <tr style='border-bottom: 2px solid #36454F;'>
+                                <th style='text-align:left; padding:8px;'>Class</th>
+                                <th style='text-align:center; padding:8px;'>Precision</th>
+                                <th style='text-align:center; padding:8px;'>Recall</th>
+                                <th style='text-align:center; padding:8px;'>F1-score</th>
+                                <th style='text-align:center; padding:8px;'>Support</th>
+                            </tr>
+                    """
+                    
+                    for idx, row in report_df.iterrows():
+                        html_table += f"""
+                            <tr style='border-bottom: 1px solid #ddd;'>
+                                <td style='padding:8px;'>{idx}</td>
+                                <td style='text-align:center; padding:8px;'>{row['precision']:.4f}</td>
+                                <td style='text-align:center; padding:8px;'>{row['recall']:.4f}</td>
+                                <td style='text-align:center; padding:8px;'>{row['f1-score']:.4f}</td>
+                                <td style='text-align:center; padding:8px;'>{row['support']}</td>
+                            </tr>
+                        """
+                    
+                    html_table += "</table></div>"
+                    st.markdown(html_table, unsafe_allow_html=True)
                 
                 st.success("Model trained successfully! Mazel tov! 🎉")
                 
