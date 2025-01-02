@@ -167,8 +167,8 @@ def format_classification_report(y_true, y_pred):
     
     # Create formatted table
     html = """
-    <table style='width:100%; border-collapse: collapse; margin: 10px 0;'>
-        <tr style='border-bottom: 2px solid #36454F;'>
+    <table style='width:100%; border-collapse: collapse; color:#2c3e50; margin: 10px 0;'>
+        <tr style='border-bottom: 2px solid #2c3e50;'>
             <th style='text-align:left; padding:8px;'>Class</th>
             <th style='text-align:center; padding:8px;'>Precision</th>
             <th style='text-align:center; padding:8px;'>Recall</th>
@@ -194,7 +194,7 @@ def format_classification_report(y_true, y_pred):
     for metric in ['macro avg', 'weighted avg']:
         metrics = report_dict[metric]
         html += f"""
-        <tr style='border-top: 1px solid #36454F;'>
+        <tr style='border-top: 1px solid #2c3e50;'>
             <td style='padding:8px;'>{metric}</td>
             <td style='text-align:center; padding:8px;'>{metrics['precision']:.2f}</td>
             <td style='text-align:center; padding:8px;'>{metrics['recall']:.2f}</td>
@@ -214,17 +214,11 @@ def save_model(model):
         st.error(f"Error saving model: {str(e)}")
 
 def main():
-    st.markdown("""
-        <style>
-        .dataframe {color: #36454F !important;}
-        </style>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("<h1 style='text-align: center; color: #36454F;'>ML Model Predictor</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #36454F;'>Make predictions with our trained model</p>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: #2c3e50;'>ML Model Predictor</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #2c3e50;'>Make predictions with our trained model</p>", unsafe_allow_html=True)
     
     # Training section
-    st.markdown("<h2 style='color: #36454F;'>Model Training</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='color: #2c3e50;'>Model Training</h2>", unsafe_allow_html=True)
     if st.button("Train Model"):
         with st.spinner("Training in progress... Hold on to your kippah!"):
             try:
@@ -238,6 +232,7 @@ def main():
                 
                 with col1:
                     st.markdown("This plot shows that both the training set and validation set are accurately predicting on unseen data with consistent logloss to prevent over-fitting.")
+                    # Assuming plot_training_metrics is defined elsewhere
                     fig = plot_training_metrics(eval_result)
                     st.pyplot(fig)
                 
@@ -255,11 +250,7 @@ def main():
                     report_df = pd.DataFrame(report_data, index=report_index)
 
                     # Display classification report as a table
-                    st.markdown("### Classification Report")
-                    st.markdown(
-                        f'<style>div[data-testid="stTable"] {{ color: #36454F !important; }}</style>',
-                        unsafe_allow_html=True
-                    )
+                    st.markdown("### Classification Report", unsafe_allow_html=True)
                     st.table(report_df)
                 
                 st.success("Model trained successfully! Mazel tov! 🎉")
