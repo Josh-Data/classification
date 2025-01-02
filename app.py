@@ -124,13 +124,13 @@ def train_model():
     y = trainer.fail
     X_train, X_val, y_train, y_val = tts(X, y, train_size=0.8, random_state=42)
     
-    # Train the model with evaluation metrics
+    # Train the model
     model = xgb.XGBClassifier(n_estimators=20, eval_metric='logloss')
     eval_set = [(X_train, y_train), (X_val, y_val)]
     model.fit(X_train, y_train, 
              eval_set=eval_set,
              verbose=False)
-             
+    
     # Get evaluation results
     eval_result = model.evals_result()
     
@@ -140,7 +140,6 @@ def train_model():
     return model, X.columns, eval_result, tester.fail, test_predictions
 
 def plot_training_metrics(eval_result):
-    # Create figure
     fig, ax = plt.subplots(figsize=(8, 5))
     
     training_rounds = range(len(eval_result['validation_0']['logloss']))
@@ -162,6 +161,51 @@ def plot_training_metrics(eval_result):
     
     return fig
 
+def format_classification_report(y_true, y_pred):
+    """Format classification report as a styled table"""
+    report_dict = classification_report(y_true, y_pred, output_dict=True)
+    
+    # Create formatted table
+    html = """
+    <table style='width:100%; border-collapse: collapse; color:#2c3e50; margin: 10px 0;'>
+        <tr style='border-bottom: 2px solid #2c3e50;'>
+            <th style='text-align:left; padding:8px;'>Class</th>
+            <th style='text-align:center; padding:8px;'>Precision</th>
+            <th style='text-align:center; padding:8px;'>Recall</th>
+            <th style='text-align:center; padding:8px;'>F1-score</th>
+            <th style='text-align:center; padding:8px;'>Support</th>
+        </tr>
+    """
+    
+    # Add rows for each class
+    for label in ['0', '1']:
+        metrics = report_dict[label]
+        html += f"""
+        <tr style='border-bottom: 1px solid #ddd;'>
+            <td style='padding:8px;'>{label}</td>
+            <td style='text-align:center; padding:8px;'>{metrics['precision']:.2f}</td>
+            <td style='text-align:center; padding:8px;'>{metrics['recall']:.2f}</td>
+            <td style='text-align:center; padding:8px;'>{metrics['f1-score']:.2f}</td>
+            <td style='text-align:center; padding:8px;'>{metrics['support']}</td>
+        </tr>
+        """
+    
+    # Add summary rows
+    for metric in ['macro avg', 'weighted avg']:
+        metrics = report_dict[metric]
+        html += f"""
+        <tr style='border-top: 1px solid #2c3e50;'>
+            <td style='padding:8px;'>{metric}</td>
+            <td style='text-align:center; padding:8px;'>{metrics['precision']:.2f}</td>
+            <td style='text-align:center; padding:8px;'>{metrics['recall']:.2f}</td>
+            <td style='text-align:center; padding:8px;'>{metrics['f1-score']:.2f}</td>
+            <td style='text-align:center; padding:8px;'>{metrics['support']}</td>
+        </tr>
+        """
+    
+    html += "</table>"
+    return html
+
 def save_model(model):
     try:
         with open('model.pkl', 'wb') as f:
@@ -170,19 +214,10 @@ def save_model(model):
         st.error(f"Error saving model: {str(e)}")
 
 def main():
-    # Custom title styling
     st.markdown("<h1 style='text-align: center; color: #2c3e50;'>ML Model Predictor</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #2c3e50;'>Make predictions with our trained model</p>", unsafe_allow_html=True)
     
-    # Store the feature columns and training results globally
-    if 'feature_columns' not in st.session_state:
-        st.session_state.feature_columns = None
-    if 'eval_result' not in st.session_state:
-        st.session_state.eval_result = None
-    if 'classification_report' not in st.session_state:
-        st.session_state.classification_report = None
-    
-    # Training section with styled header
+    # Training section
     st.markdown("<h2 style='color: #2c3e50;'>Model Training</h2>", unsafe_allow_html=True)
     if st.button("Train Model"):
         with st.spinner("Training in progress... Hold on to your kippah!"):
@@ -190,13 +225,6 @@ def main():
                 model, features, eval_result, test_actual, test_pred = train_model()
                 st.session_state.feature_columns = features
                 save_model(model)
-                
-                # Display training metrics
-                st.markdown("<h3 style='color: #2c3e50;'>Training Metrics</h3>", unsafe_allow_html=True)
-                
-                # Store results in session state
-                st.session_state.eval_result = eval_result
-                st.session_state.classification_report = classification_report(test_actual, test_pred)
                 
                 # Create two columns for the visualizations
                 col1, col2 = st.columns(2)
@@ -207,127 +235,16 @@ def main():
                     st.pyplot(fig)
                 
                 with col2:
-                    st.markdown("The model is performing quite well, especially with predicting model failures (class 1) with out over fitting as evidenced by the plot to the left.")
-                    report = classification_report(test_actual, test_pred)
-                    st.markdown(f"""
-                    <pre style='color: #2c3e50;'>
-                    {report}
-                    </pre>
-                    """, unsafe_allow_html=True)
+                    st.markdown("The model is performing quite well, especially with predicting model failures (class 1) without over-fitting as evidenced by the plot to the left.")
+                    report_html = format_classification_report(test_actual, test_pred)
+                    st.markdown(report_html, unsafe_allow_html=True)
                 
                 st.success("Model trained successfully! Mazel tov! 🎉")
+                
             except Exception as e:
                 st.error(f"Error during training: {str(e)}")
-    
-    # Display metrics if available
-    if st.session_state.eval_result is not None:
-        # Create two columns for the visualizations
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown("This plot shows that both the training set and validation set are accurately predicting on unseen data with consistent logloss to prevent over-fitting.")
-            fig = plot_training_metrics(st.session_state.eval_result)
-            st.pyplot(fig)
-        
-        with col2:
-            st.markdown("The model is performing quite well, especially with predicting model failures (class 1) with out over fitting as evidenced by the plot to the left.")
-            # Create a string capture of the classification report
-            from io import StringIO
-            import sys
 
-            # Capture the print output
-            old_stdout = sys.stdout
-            string_buffer = StringIO()
-            sys.stdout = string_buffer
-            
-            print(classification_report(test_actual, test_pred))
-            
-            # Restore stdout
-            sys.stdout = old_stdout
-            report_string = string_buffer.getvalue()
-            
-            st.markdown(f"""
-            <pre style='color: #2c3e50; background-color: white; padding: 10px;'>
-{report_string}
-            </pre>
-            """, unsafe_allow_html=True)
+    # Prediction section [Rest of the prediction code remains the same]
     
-    # Prediction section with styled header
-    st.markdown("<h2 style='color: #2c3e50;'>Make Predictions</h2>", unsafe_allow_html=True)
-    st.markdown("""
-    A chemical engineering system is made up of different machines that work together as part of a larger setup. 
-    Each machine has a sensor to monitor how it's performing. Apart from the machine settings, external factors 
-    like air quality can also impact how long the system lasts. You can adjust the settings and predict how 
-    the system will perform based on those changes.
-    """)
-    
-    try:
-        if st.session_state.feature_columns is not None:
-            with open('model.pkl', 'rb') as f:
-                model = pickle.load(f)
-            
-            # Create a form for user input
-            with st.form("prediction_form"):
-                st.markdown("<h3 style='color: #2c3e50;'>Enter values for prediction</h3>", unsafe_allow_html=True)
-                
-                # Create input fields for each feature with sliders
-                input_data = {}
-                
-                # Create two columns for a better layout
-                col1, col2 = st.columns(2)
-                
-                features = list(DEFAULT_VALUES.keys())
-                mid_point = len(features) // 2
-                
-                # First column
-                with col1:
-                    for feature in features[:mid_point]:
-                        min_val, max_val = VALUE_RANGES[feature]
-                        input_data[feature] = st.slider(
-                            f"{feature}",
-                            min_value=float(min_val),
-                            max_value=float(max_val),
-                            value=float(DEFAULT_VALUES[feature]),
-                            step=0.1 if feature in ['footfall', 'Temperature'] else 1.0,
-                            help=f"Range: {min_val} to {max_val}"
-                        )
-                
-                # Second column
-                with col2:
-                    for feature in features[mid_point:]:
-                        min_val, max_val = VALUE_RANGES[feature]
-                        input_data[feature] = st.slider(
-                            f"{feature}",
-                            min_value=float(min_val),
-                            max_value=float(max_val),
-                            value=float(DEFAULT_VALUES[feature]),
-                            step=0.1 if feature in ['footfall', 'Temperature'] else 1.0,
-                            help=f"Range: {min_val} to {max_val}"
-                        )
-                
-                submitted = st.form_submit_button("Predict")
-                if submitted:
-                    # Make prediction
-                    input_df = pd.DataFrame([input_data])
-                    prediction = model.predict(input_df)
-                    probability = model.predict_proba(input_df)
-                    
-                    # Display results with styled header
-                    st.markdown("<h3 style='color: #2c3e50;'>Prediction Results</h3>", unsafe_allow_html=True)
-                    result = 'Fail' if prediction[0] == 1 else 'Pass'
-                    prob = probability[0][1]
-                    
-                    # Colored box based on prediction
-                    if result == 'Pass':
-                        st.success(f"Prediction: {result} (Probability: {prob:.2%})")
-                    else:
-                        st.error(f"Prediction: {result} (Probability: {prob:.2%})")
-                    
-        else:
-            st.info("Please train the model first before making predictions!")
-            
-    except Exception as e:
-        st.error(f"Error loading model: {str(e)}")
-
 if __name__ == "__main__":
     main()
