@@ -221,8 +221,6 @@ def main():
     
     # Display metrics if available
     if st.session_state.eval_result is not None:
-        st.markdown("<h3 style='color: #2c3e50;'>Training Metrics</h3>", unsafe_allow_html=True)
-        
         # Create two columns for the visualizations
         col1, col2 = st.columns(2)
         
@@ -233,9 +231,24 @@ def main():
         
         with col2:
             st.markdown("The model is performing quite well, especially with predicting model failures (class 1) with out over fitting as evidenced by the plot to the left.")
+            # Create a string capture of the classification report
+            from io import StringIO
+            import sys
+
+            # Capture the print output
+            old_stdout = sys.stdout
+            string_buffer = StringIO()
+            sys.stdout = string_buffer
+            
+            print(classification_report(test_actual, test_pred))
+            
+            # Restore stdout
+            sys.stdout = old_stdout
+            report_string = string_buffer.getvalue()
+            
             st.markdown(f"""
-            <pre style='color: #2c3e50; white-space: pre; font-family: monospace;'>
-{st.session_state.classification_report}
+            <pre style='color: #2c3e50; background-color: white; padding: 10px;'>
+{report_string}
             </pre>
             """, unsafe_allow_html=True)
     
