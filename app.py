@@ -326,13 +326,15 @@ def main():
                     # Display results with styled header
                     st.markdown("<h3 style='color: #2c3e50;'>Prediction Results</h3>", unsafe_allow_html=True)
                     result = 'Fail' if prediction[0] == 1 else 'Pass'
-                    prob = probability[0][1]
+                    
+                    # Get probability for the predicted class
+                    prob = probability[0][1] if prediction[0] == 1 else probability[0][0]
                     
                     # Colored box based on prediction
                     if result == 'Pass':
-                        st.success(f"Prediction: {result} (Probability: {prob:.2%})")
+                        st.success(f"Prediction: {result} (Confidence: {prob:.2%})")
                     else:
-                        st.error(f"Prediction: {result} (Probability: {prob:.2%})")
+                        st.error(f"Prediction: {result} (Confidence: {prob:.2%})")
                     
         else:
             st.info("Please train the model first before making predictions!")
