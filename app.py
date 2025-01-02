@@ -174,9 +174,13 @@ def main():
     st.markdown("<h1 style='text-align: center; color: #2c3e50;'>ML Model Predictor</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #2c3e50;'>Make predictions with our trained model</p>", unsafe_allow_html=True)
     
-    # Store the feature columns globally after first training
+    # Store the feature columns and training results globally
     if 'feature_columns' not in st.session_state:
         st.session_state.feature_columns = None
+    if 'eval_result' not in st.session_state:
+        st.session_state.eval_result = None
+    if 'classification_report' not in st.session_state:
+        st.session_state.classification_report = None
     
     # Training section with styled header
     st.markdown("<h2 style='color: #2c3e50;'>Model Training</h2>", unsafe_allow_html=True)
@@ -189,6 +193,10 @@ def main():
                 
                 # Display training metrics
                 st.markdown("<h3 style='color: #2c3e50;'>Training Metrics</h3>", unsafe_allow_html=True)
+                
+                # Store results in session state
+                st.session_state.eval_result = eval_result
+                st.session_state.classification_report = classification_report(test_actual, test_pred)
                 
                 # Create two columns for the visualizations
                 col1, col2 = st.columns(2)
@@ -210,6 +218,26 @@ def main():
                 st.success("Model trained successfully! Mazel tov! 🎉")
             except Exception as e:
                 st.error(f"Error during training: {str(e)}")
+    
+    # Display metrics if available
+    if st.session_state.eval_result is not None:
+        st.markdown("<h3 style='color: #2c3e50;'>Training Metrics</h3>", unsafe_allow_html=True)
+        
+        # Create two columns for the visualizations
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("This plot shows that both the training set and validation set are accurately predicting on unseen data with consistent logloss to prevent over-fitting.")
+            fig = plot_training_metrics(st.session_state.eval_result)
+            st.pyplot(fig)
+        
+        with col2:
+            st.markdown("The model is performing quite well, especially with predicting model failures (class 1) with out over fitting as evidenced by the plot to the left.")
+            st.markdown(f"""
+            <pre style='color: #2c3e50; white-space: pre; font-family: monospace;'>
+{st.session_state.classification_report}
+            </pre>
+            """, unsafe_allow_html=True)
     
     # Prediction section with styled header
     st.markdown("<h2 style='color: #2c3e50;'>Make Predictions</h2>", unsafe_allow_html=True)
