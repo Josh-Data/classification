@@ -238,7 +238,7 @@ def main():
                     st.markdown("The model is performing quite well, especially with predicting model failures (class 1) without over-fitting as evidenced by the plot to the left.")
                     # Create fixed-width text classification report
                     report = f"""```
-              precision    recall  f1-score   support
+                 precision    recall  f1-score   support
 
            0       0.92      0.86      0.89        93
            1       0.87      0.93      0.90        96
@@ -246,10 +246,16 @@ def main():
     accuracy                           0.89       189
    macro avg       0.90      0.89      0.89       189
 weighted avg       0.90      0.89      0.89       189
+
+
+
+
+
+
 ```"""
                     st.markdown(report)
                 
-                st.success("Model trained successfully! Mazel tov! 🎉")
+                st.success("Model trained successfully! ")
                 
             except Exception as e:
                 st.error(f"Error during training: {str(e)}")
