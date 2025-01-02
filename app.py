@@ -236,26 +236,21 @@ def main():
                 
                 with col2:
                     st.markdown("The model is performing quite well, especially with predicting model failures (class 1) without over-fitting as evidenced by the plot to the left.")
-                    # Create fixed-width text classification report
-                    report = f"""```
-                 precision    recall  f1-score   support
+                    # Create fixed-width text classification report with custom styling
+                    report_style = """
+                    <div style="font-family: monospace; color: #808080; white-space: pre;">
+                                 precision    recall  f1-score   support
 
-           0       0.92      0.86      0.89        93
-           1       0.87      0.93      0.90        96
+           0          0.92      0.86      0.89        93
+           1          0.87      0.93      0.90        96
 
-    accuracy                           0.89       189
-   macro avg       0.90      0.89      0.89       189
-weighted avg       0.90      0.89      0.89       189
-
-
-
-
-
-
-```"""
-                    st.markdown(report)
+    accuracy                            0.89       189
+   macro avg          0.90      0.89      0.89       189
+weighted avg          0.90      0.89      0.89       189
+</div>"""
+                    st.markdown(report_style, unsafe_allow_html=True)
                 
-                st.success("Model trained successfully! ")
+                st.success("Model trained successfully! Mazel tov! 🎉")
                 
             except Exception as e:
                 st.error(f"Error during training: {str(e)}")
@@ -339,3 +334,4 @@ weighted avg       0.90      0.89      0.89       189
 
 if __name__ == "__main__":
     main()
+
