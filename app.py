@@ -125,11 +125,10 @@ def train_model():
     X_train, X_val, y_train, y_val = tts(X, y, train_size=0.8, random_state=42)
     
     # Train the model with evaluation metrics
-    model = xgb.XGBClassifier(n_estimators=20)
+    model = xgb.XGBClassifier(n_estimators=20, eval_metric='logloss')
     eval_set = [(X_train, y_train), (X_val, y_val)]
     model.fit(X_train, y_train, 
              eval_set=eval_set,
-             eval_metric=['logloss'],
              verbose=False)
              
     # Get evaluation results
