@@ -77,7 +77,14 @@ st.markdown("""
     }
     /* Style the predict button text */
     .stButton>button[type="submit"] {
-        color: #4addbe  !important;
+        background-color: #4addbe !important; /* Light teal */
+        color: #ffffff !important; /* White text */
+        border: 1px solid #2c3e50 !important; /* Dark border */
+        font-weight: 400 !important;
+    }
+    .stButton>button[type="submit"]:hover {
+        background-color: #5be4c5 !important; /* Slightly lighter teal on hover */
+        color: #ffffff !important; /* Ensure text stays white on hover */
     }
     /* Additional styling for slider range values */
     .stSlider div[data-baseweb="slider"] div[role="slider"] {
