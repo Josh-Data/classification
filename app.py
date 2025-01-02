@@ -77,7 +77,7 @@ st.markdown("""
     }
     /* Style the predict button text */
     .stButton>button[type="submit"] {
-        color: white !important;
+        color: #2c3e50  !important;
     }
     /* Additional styling for slider range values */
     .stSlider div[data-baseweb="slider"] div[role="slider"] {
