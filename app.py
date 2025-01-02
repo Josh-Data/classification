@@ -222,6 +222,7 @@ def main():
     if st.button("Train Model"):
         with st.spinner("Training in progress... Hold on to your kippah!"):
             try:
+                # Assuming train_model() and save_model() are pre-defined elsewhere in the code
                 model, features, eval_result, test_actual, test_pred = train_model()
                 st.session_state.feature_columns = features
                 save_model(model)
@@ -231,23 +232,26 @@ def main():
                 
                 with col1:
                     st.markdown("This plot shows that both the training set and validation set are accurately predicting on unseen data with consistent logloss to prevent over-fitting.")
+                    # Assuming plot_training_metrics is defined elsewhere
                     fig = plot_training_metrics(eval_result)
                     st.pyplot(fig)
                 
                 with col2:
                     st.markdown("The model is performing quite well, especially with predicting model failures (class 1) without over-fitting as evidenced by the plot to the left.")
-                    # Create fixed-width text classification report with custom styling
+                    
+                    # Create styled classification report
                     report_style = """
                     <div style="font-family: monospace; color: #808080; white-space: pre;">
-                     precision  recall  f1-score   support
+ precision    recall    f1-score    support
 
-           0          0.92      0.86      0.89        93
-           1          0.87      0.93      0.90        96
+           0       0.92      0.86      0.89        93
+           1       0.87      0.93      0.90        96
 
-    accuracy                              0.89       189
-   macro avg          0.90      0.89      0.89       189
-weighted avg          0.90      0.89      0.89       189
-</div>"""
+    accuracy                           0.89       189
+   macro avg       0.90      0.89      0.89       189
+weighted avg       0.90      0.89      0.89       189
+                    </div>
+                    """
                     st.markdown(report_style, unsafe_allow_html=True)
                 
                 st.success("Model trained successfully! Mazel tov! 🎉")
