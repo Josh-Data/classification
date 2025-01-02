@@ -77,7 +77,7 @@ st.markdown("""
     }
     /* Style the predict button text */
     .stButton>button[type="submit"] {
-        color: #2c3e50  !important;
+        color: #4addbe  !important;
     }
     /* Additional styling for slider range values */
     .stSlider div[data-baseweb="slider"] div[role="slider"] {
@@ -252,7 +252,7 @@ def main():
                 st.session_state.test_actual = test_actual
                 st.session_state.test_pred = test_pred
                 save_model(model)
-                st.success("Model trained successfully! Mazel tov! 🎉")
+                st.success("Model trained successfully!")
             except Exception as e:
                 st.error(f"Error during training: {str(e)}")
 
@@ -328,7 +328,7 @@ def main():
                     probability = st.session_state.model.predict_proba(input_df)
                     
                     # Display results with styled header
-                    st.markdown("<h3 style='color: #2c3e50;'>Prediction Results</h3>", unsafe_allow_html=True)
+                    st.markdown("<h3 style='color: #4addbe'>Prediction Results</h3>", unsafe_allow_html=True)
                     result = 'Fail' if prediction[0] == 1 else 'Pass'
                     
                     # Get probability for the predicted class
