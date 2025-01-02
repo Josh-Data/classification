@@ -68,12 +68,14 @@ st.markdown("""
     }
 
     /* Styling for sliders - changing red to charcoal */
+    /* Set the color of the filled (active) portion of the slider */
     .stSlider > div > div > div {
-        background-color: #2c3e50 !important; /* Charcoal color */
+        background-color: #2c3e50 !important; /* Charcoal for active portion */
     }
 
+    /* Keep the unfilled portion of the slider light grey */
     .stSlider > div > div > div > div {
-        background-color: #2c3e50 !important; /* Charcoal color for active slider */
+        background-color: lightgrey !important; /* Light grey for the unfilled portion */
     }
 
     /* Ensure slider values are visible */
