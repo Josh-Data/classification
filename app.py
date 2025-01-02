@@ -15,52 +15,69 @@ st.set_page_config(
 )
 
 # Custom CSS styling
+# Custom CSS styling
 st.markdown("""
     <style>
+    /* General background color */
     .stApp {
-        background-color: white;
+        background-color: white !important;
     }
-    .css-1d391kg {
-        background-color: white;
-    }
+
+    /* Apply custom styles for the submit button */
     .stButton>button {
         background-color: #4addbe !important; /* Light teal */
         color: #ffffff !important; /* White text */
         border: 1px solid #2c3e50 !important; /* Dark border */
         font-weight: 400 !important;
     }
-    /* Ensure text stays white on hover */
+
+    /* Hover state */
     .stButton>button:hover {
         background-color: #5be4c5 !important; /* Slightly lighter teal on hover */
         color: #ffffff !important; /* Keep text white */
-        border: 1px solid #2c3e50 !important; /* Dark border on hover */
+        border: 1px solid #2c3e50 !important; /* Keep the dark border */
     }
-    /* Ensure the button text is white on active (clicked) state */
+
+    /* Active state (clicked) */
     .stButton>button:active {
-        background-color: #e74c3c !important; /* Red color when clicked */
+        background-color: #e74c3c !important; /* Red when clicked */
         color: #ffffff !important; /* Keep text white */
         border: 1px solid #2c3e50 !important; /* Dark border on click */
     }
 
+    /* Ensuring the button text is white */
+    .stButton>button:focus {
+        background-color: #4addbe !important; /* Same as default color */
+        color: #ffffff !important; /* White text */
+        border: 1px solid #2c3e50 !important;
+    }
+
+    /* Specifically targeting the submit button */
+    div[data-testid="stFormSubmitButton"] button {
+        background-color: #4addbe !important;
+        color: #ffffff !important;
+        border: 1px solid #2c3e50 !important;
+        font-weight: 400 !important;
+    }
+
+    /* Target hover and active states specifically for submit button */
+    div[data-testid="stFormSubmitButton"] button:hover {
+        background-color: #5be4c5 !important;
+    }
+    div[data-testid="stFormSubmitButton"] button:active {
+        background-color: #e74c3c !important;
+    }
+
+    /* General text styling */
     .stMarkdown, h1, h2, h3, p, span, label, .stSlider [data-baseweb="caption"] {
         color: #2c3e50 !important;
     }
+
+    /* Styling for sliders */
     .stSlider [data-testid="stText"] {
         color: #2c3e50 !important;
     }
-    .stButton>button[type="submit"], .stButton button:has([data-testid="stFormSubmitButton"]) {
-        color: #ffffff !important;
-        font-weight: 400 !important;
-    }
-    .st-emotion-cache-1y4p8pa {
-        width: 100%;
-    }
-    .st-emotion-cache-1y4p8pa .stSlider > div > div > div {
-        background-color: #4addbe !important;
-    }
-    .st-emotion-cache-1y4p8pa .stSlider > div > div > div > div {
-        background-color: #4addbe !important;
-    }
+
     .stSlider label, 
     .stSlider [data-testid="stMarkdownContainer"] p,
     .stSlider [data-baseweb="caption"],
@@ -69,6 +86,7 @@ st.markdown("""
     .stMarkdown div[data-testid="stMarkdownContainer"] p {
         color: #2c3e50 !important;
     }
+
     input[type="number"],
     .stSlider [data-baseweb="typography"],
     .stSlider [data-testid="stWidgetLabel"],
@@ -76,9 +94,11 @@ st.markdown("""
     div[data-baseweb="slider"] div > span {
         color: #2c3e50 !important;
     }
+
     div[data-baseweb="slider"] span {
         color: #2c3e50 !important;
     }
+
     .stSlider div[data-baseweb="slider"] div[role="slider"] {
         color: #2c3e50 !important;
     }
