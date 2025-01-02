@@ -244,7 +244,7 @@ def main():
                 with col2:
                     st.markdown("The model is performing quite well, especially with predicting model failures (class 1) without over-fitting as evidenced by the plot to the left.")
                     st.markdown("### Classification Report")
-                    st.image("cr.png", use_column_width=True)
+                    st.image("classification_report.png", use_column_width=True)
                 
                 st.success("Model trained successfully! Mazel tov! 🎉")
             except Exception as e:
