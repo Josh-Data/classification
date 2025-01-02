@@ -165,9 +165,9 @@ def format_classification_report(y_true, y_pred):
     """Format classification report as a styled table"""
     report_dict = classification_report(y_true, y_pred, output_dict=True)
     
-    # Create formatted table with charcoal text color (#36454F)
+    # Create formatted table
     html = """
-    <table style='width:100%; border-collapse: collapse; color:#36454F; margin: 10px 0;'>
+    <table style='width:100%; border-collapse: collapse; margin: 10px 0;'>
         <tr style='border-bottom: 2px solid #36454F;'>
             <th style='text-align:left; padding:8px;'>Class</th>
             <th style='text-align:center; padding:8px;'>Precision</th>
@@ -214,6 +214,12 @@ def save_model(model):
         st.error(f"Error saving model: {str(e)}")
 
 def main():
+    st.markdown("""
+        <style>
+        .dataframe {color: #36454F !important;}
+        </style>
+    """, unsafe_allow_html=True)
+    
     st.markdown("<h1 style='text-align: center; color: #36454F;'>ML Model Predictor</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #36454F;'>Make predictions with our trained model</p>", unsafe_allow_html=True)
     
@@ -232,7 +238,6 @@ def main():
                 
                 with col1:
                     st.markdown("This plot shows that both the training set and validation set are accurately predicting on unseen data with consistent logloss to prevent over-fitting.")
-                    # Assuming plot_training_metrics is defined elsewhere
                     fig = plot_training_metrics(eval_result)
                     st.pyplot(fig)
                 
@@ -249,35 +254,9 @@ def main():
                     report_index = ["Class 0", "Class 1", "Macro Avg", "Weighted Avg"]
                     report_df = pd.DataFrame(report_data, index=report_index)
 
-                    # Display classification report as HTML table
+                    # Display classification report as a table
                     st.markdown("### Classification Report")
-                    
-                    # Convert DataFrame to HTML table with custom styling
-                    html_table = f"""
-                    <div style='color: #36454F;'>
-                        <table style='width:100%; border-collapse: collapse; margin: 10px 0;'>
-                            <tr style='border-bottom: 2px solid #36454F;'>
-                                <th style='text-align:left; padding:8px;'>Class</th>
-                                <th style='text-align:center; padding:8px;'>Precision</th>
-                                <th style='text-align:center; padding:8px;'>Recall</th>
-                                <th style='text-align:center; padding:8px;'>F1-score</th>
-                                <th style='text-align:center; padding:8px;'>Support</th>
-                            </tr>
-                    """
-                    
-                    for idx, row in report_df.iterrows():
-                        html_table += f"""
-                            <tr style='border-bottom: 1px solid #ddd;'>
-                                <td style='padding:8px;'>{idx}</td>
-                                <td style='text-align:center; padding:8px;'>{row['precision']:.4f}</td>
-                                <td style='text-align:center; padding:8px;'>{row['recall']:.4f}</td>
-                                <td style='text-align:center; padding:8px;'>{row['f1-score']:.4f}</td>
-                                <td style='text-align:center; padding:8px;'>{row['support']}</td>
-                            </tr>
-                        """
-                    
-                    html_table += "</table></div>"
-                    st.markdown(html_table, unsafe_allow_html=True)
+                    st.table(report_df)
                 
                 st.success("Model trained successfully! Mazel tov! 🎉")
                 
