@@ -311,7 +311,7 @@ def main():
                     probability = model.predict_proba(input_df)
                     
                     # Display results with styled header
-                    st.markdown("<h3 style='color: #4addbe'>Prediction Results</h3>", unsafe_allow_html=True)
+                    st.markdown("<h3 style='color: #2c3e50;'>Prediction Results</h3>", unsafe_allow_html=True)
                     result = 'Fail' if prediction[0] == 1 else 'Pass'
                     prob = probability[0][1]
                     
