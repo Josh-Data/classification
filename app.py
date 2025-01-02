@@ -226,7 +226,7 @@ def main():
     # Training section
     st.markdown("<h2 style='color: #36454F;'>Model Training</h2>", unsafe_allow_html=True)
     if st.button("Train Model"):
-        with st.spinner("Training in progress... Hold on to your kippah!"):
+        with st.spinner("Training in progress... "):
             try:
                 # Assuming train_model() and save_model() are pre-defined elsewhere in the code
                 model, features, eval_result, test_actual, test_pred = train_model()
@@ -244,9 +244,9 @@ def main():
                 with col2:
                     st.markdown("The model is performing quite well, especially with predicting model failures (class 1) without over-fitting as evidenced by the plot to the left.")
                     st.markdown("### Classification Report")
-                    st.image("cr.png", use_column_width=True)
+                    st.image("classification_report.png", use_container_width=True)
                 
-                st.success("Model trained successfully! Mazel tov! 🎉")
+                st.success("Model trained successfully!")
             except Exception as e:
                 st.error(f"Error during training: {str(e)}")
 
@@ -311,7 +311,7 @@ def main():
                     probability = model.predict_proba(input_df)
                     
                     # Display results with styled header
-                    st.markdown("<h3 style='color: #2c3e50;'>Prediction Results</h3>", unsafe_allow_html=True)
+                    st.markdown("<h3 style='color: #4addbe'>Prediction Results</h3>", unsafe_allow_html=True)
                     result = 'Fail' if prediction[0] == 1 else 'Pass'
                     prob = probability[0][1]
                     
