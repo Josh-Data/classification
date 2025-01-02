@@ -254,7 +254,6 @@ def main():
 
     # Display visualizations if we have training results
     if st.session_state.eval_result is not None:
-        # Create two columns for the visualizations
         col1, col2 = st.columns(2)
         
         with col1:
@@ -265,7 +264,7 @@ def main():
         with col2:
             st.markdown("The model is performing quite well, especially with predicting model failures (class 1) without over-fitting as evidenced by the plot to the left.")
             st.markdown("### Classification Report")
-            st.image("cr.png", use_container_width=True)  # Updated parameter here
+            st.image("cr.png", use_container_width=True)
 
     # Prediction section
     st.markdown("<h2 style='color: #2c3e50;'>Make Predictions</h2>", unsafe_allow_html=True)
@@ -278,10 +277,65 @@ def main():
     
     try:
         if st.session_state.feature_columns is not None:
-            with open('model.pkl', 'rb') as f:
-                model = pickle.load(f)
-            
-            # [Rest of the prediction form code remains the same]
+            # Create a form for user input
+            with st.form("prediction_form"):
+                st.markdown("<h3 style='color: #2c3e50;'>Enter values for prediction</h3>", unsafe_allow_html=True)
+                
+                # Create input fields for each feature with sliders
+                input_data = {}
+                
+                # Create two columns for a better layout
+                col1, col2 = st.columns(2)
+                
+                features = list(DEFAULT_VALUES.keys())
+                mid_point = len(features) // 2
+                
+                # First column
+                with col1:
+                    for feature in features[:mid_point]:
+                        min_val, max_val = VALUE_RANGES[feature]
+                        input_data[feature] = st.slider(
+                            f"{feature}",
+                            min_value=float(min_val),
+                            max_value=float(max_val),
+                            value=float(DEFAULT_VALUES[feature]),
+                            step=0.1 if feature in ['footfall', 'Temperature'] else 1.0,
+                            help=f"Range: {min_val} to {max_val}"
+                        )
+                
+                # Second column
+                with col2:
+                    for feature in features[mid_point:]:
+                        min_val, max_val = VALUE_RANGES[feature]
+                        input_data[feature] = st.slider(
+                            f"{feature}",
+                            min_value=float(min_val),
+                            max_value=float(max_val),
+                            value=float(DEFAULT_VALUES[feature]),
+                            step=0.1 if feature in ['footfall', 'Temperature'] else 1.0,
+                            help=f"Range: {min_val} to {max_val}"
+                        )
+                
+                submitted = st.form_submit_button("Predict")
+                if submitted:
+                    # Make prediction using session state model
+                    input_df = pd.DataFrame([input_data])
+                    prediction = st.session_state.model.predict(input_df)
+                    probability = st.session_state.model.predict_proba(input_df)
+                    
+                    # Display results with styled header
+                    st.markdown("<h3 style='color: #2c3e50;'>Prediction Results</h3>", unsafe_allow_html=True)
+                    result = 'Fail' if prediction[0] == 1 else 'Pass'
+                    prob = probability[0][1]
+                    
+                    # Colored box based on prediction
+                    if result == 'Pass':
+                        st.success(f"Prediction: {result} (Probability: {prob:.2%})")
+                    else:
+                        st.error(f"Prediction: {result} (Probability: {prob:.2%})")
+                    
+        else:
+            st.info("Please train the model first before making predictions!")
             
     except Exception as e:
         st.error(f"Error loading model: {str(e)}")
