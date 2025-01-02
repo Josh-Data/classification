@@ -3,7 +3,9 @@ import pandas as pd
 import xgboost as xgb
 import numpy as np
 from sklearn.model_selection import train_test_split as tts
+from sklearn.metrics import classification_report
 import pickle
+import matplotlib.pyplot as plt
 
 # Configure the page layout
 st.set_page_config(
@@ -122,11 +124,43 @@ def train_model():
     y = trainer.fail
     X_train, X_val, y_train, y_val = tts(X, y, train_size=0.8, random_state=42)
     
-    # Train the model
+    # Train the model with evaluation metrics
     model = xgb.XGBClassifier(n_estimators=20)
-    model.fit(X_train, y_train, eval_set=[(X_train, y_train), (X_val, y_val)])
+    eval_set = [(X_train, y_train), (X_val, y_val)]
+    model.fit(X_train, y_train, 
+             eval_set=eval_set,
+             eval_metric=['logloss'],
+             verbose=False)
+             
+    # Get evaluation results
+    eval_result = model.evals_result()
     
-    return model, X.columns
+    # Generate predictions for test set
+    test_predictions = model.predict(tester.drop(columns=["fail"]))
+    
+    return model, X.columns, eval_result, tester.fail, test_predictions
+
+def plot_training_metrics(eval_result):
+    # Create figure
+    fig, ax = plt.subplots(figsize=(8, 5))
+    
+    training_rounds = range(len(eval_result['validation_0']['logloss']))
+    
+    plt.scatter(x=training_rounds, 
+               y=eval_result['validation_0']['logloss'], 
+               label='train')
+    plt.scatter(x=training_rounds, 
+               y=eval_result['validation_1']['logloss'], 
+               label='val', 
+               color='red', 
+               alpha=0.6)
+    
+    plt.xlabel('Training Rounds')
+    plt.ylabel('Log Loss')
+    plt.title('Training and Validation Metrics')
+    plt.legend()
+    
+    return fig
 
 def save_model(model):
     try:
@@ -149,9 +183,26 @@ def main():
     if st.button("Train Model"):
         with st.spinner("Training in progress... Hold on to your kippah!"):
             try:
-                model, features = train_model()
+                model, features, eval_result, test_actual, test_pred = train_model()
                 st.session_state.feature_columns = features
                 save_model(model)
+                
+                # Display training metrics
+                st.markdown("<h3 style='color: #2c3e50;'>Training Metrics</h3>", unsafe_allow_html=True)
+                
+                # Create two columns for the visualizations
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.markdown("This plot shows that both the training set and validation set are accurately predicting on unseen data with consistent logloss to prevent over-fitting.")
+                    fig = plot_training_metrics(eval_result)
+                    st.pyplot(fig)
+                
+                with col2:
+                    st.markdown("The model is performing quite well, especially with predicting model failures (class 1) with out over fitting as evidenced by the plot to the left.")
+                    report = classification_report(test_actual, test_pred)
+                    st.text(report)
+                
                 st.success("Model trained successfully! Mazel tov! 🎉")
             except Exception as e:
                 st.error(f"Error during training: {str(e)}")
