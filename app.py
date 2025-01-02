@@ -239,12 +239,12 @@ def main():
                     # Create fixed-width text classification report with custom styling
                     report_style = """
                     <div style="font-family: monospace; color: #808080; white-space: pre;">
-                                 precision    recall  f1-score   support
+                     precision  recall  f1-score   support
 
            0          0.92      0.86      0.89        93
            1          0.87      0.93      0.90        96
 
-    accuracy                            0.89       189
+    accuracy                              0.89       189
    macro avg          0.90      0.89      0.89       189
 weighted avg          0.90      0.89      0.89       189
 </div>"""
